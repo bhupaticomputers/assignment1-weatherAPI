@@ -45,7 +45,7 @@ function App() {
           )
             .then((response) => response.json())
             .then((resp) => {
-              cityCard.cityPhoto = resp.photos[0].src.medium;
+              cityCard.cityPhoto = resp.photos[0].src.large;
             })
             .then (()=> {
               setCityCards([

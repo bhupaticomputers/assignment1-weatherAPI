@@ -3,8 +3,7 @@ import { WiHumidity } from "react-icons/wi";
 import { PiWindLight } from "react-icons/pi";
 
 function WeatherCard({ city }) {
-    return <div className="card">
-        <img className="city-image" width={262} height={332} src={city.cityPhoto} alt='' />
+    return <div className="card" style={{backgroundImage :`url(${city.cityPhoto})`}}>
         <div className='weather-content'>
             <h3>{city.city}</h3>
             <p>{city.weather}</p>
@@ -14,7 +13,6 @@ function WeatherCard({ city }) {
                 <div className='gap'></div>
                 <div className="wind-humidity-container">
                     <PiWindLight />
-
                     <span className="wind">
                         {Math.round(city.windSpeed * 3.6)}<span className='km'>km/h</span>
                     </span>
