@@ -8,7 +8,7 @@ function App() {
 
   const [cityCards, setCityCards] = useState([]);
 
-  const handleOnSearchChange = (searchData) => {
+  const handleOnSearchChange = async (searchData) => {
     let cityCard = {
       city: '',
       cityPhoto: '',
@@ -22,7 +22,6 @@ function App() {
     const [lat, lon] = searchData.value.split(' ');
 
     try {
-
       fetch(
         `${wUrl}?lat=${lat}&lon=${lon}&appid=${wApiId}&units=metric`,
         wAuth
@@ -30,6 +29,7 @@ function App() {
         .then((response) => response.json())
         .then((resp) => {
           cityCard = {
+            ...cityCard,
             city: cityName,
             weather: resp?.weather[0].description,
             icon: `https://openweathermap.org/img/wn/${resp?.weather[0].icon}@2x.png`,
@@ -37,30 +37,31 @@ function App() {
             windSpeed: resp?.wind.speed,
             humidity: resp?.main.humidity,
           }
+          setCityCards([cityCard, ...cityCards]);
         })
-        .then(()=>{
-          fetch(
-            `${url}?query=${cityName}&per_page=1`,
-            auth
-          )
-            .then((response) => response.json())
-            .then((resp) => {
-              cityCard.cityPhoto = resp.photos[0].src.large;
-            })
-            .then (()=> {
-              setCityCards([
-                cityCard,
-                ...cityCards,
-              ])
-            })
-        })
-        
     } catch (e) {
-      console.log(e.message);
+      throw (e.message);
     }
-  };
+    
+    try {
+      fetch(
+        `${url}?query=${cityName}&per_page=1`,
+        auth
+      )
+        .then((response) => response.json())
+        .then((resp) => {
+          cityCard = {
+            ...cityCard,
+            cityPhoto: resp.photos[0]?.src.large
+          }
+          setCityCards([cityCard, ...cityCards]);
+        });
+    } catch (e) {
+      throw (e.message)
+    }
+}
 
-  return (
+return (
     <div className="container">
       <Search onSearchChange={handleOnSearchChange} />
       <div className="cards-container">{cityCards.map((cityData, ind) => {
